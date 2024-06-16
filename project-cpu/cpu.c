@@ -127,7 +127,6 @@ typedef struct {
 } SCHEDULED_RESULT;
 
 SCHEDULED_RESULT FCFS() {
-    //printf("FCFS is started!\n");
     //readyQ의 첫번째 원소를 프로세스로 선택
     PROCESS current_process = processes[readyQ_FCFS.data[0] - 1];
     
@@ -145,11 +144,7 @@ SCHEDULED_RESULT FCFS() {
         sec_index = current_process.arrival_time;
     }
 
-    //printf("1) sec_index = %d\n", sec_index);
-    //printf("2) current_cpu_burst = %d\n", current_cpu_burst);
-    //printf("3) current process = %d\n", current_process.pid);
     while(!Is_empty(&readyQ_FCFS)) { //ready queue가 빌 때까지 반복
-        //printf("[while]\n");
         //현재 프로세스의 도착 시간이 second보다 큰 경우 : 실행할 프로세스가 없음 => 해당 second부터 도착시간까지 0 기록
         if (current_process.arrival_time > sec_index) {
             for (; sec_index < current_process.arrival_time; sec_index++) {
@@ -163,12 +158,9 @@ SCHEDULED_RESULT FCFS() {
             if(!Is_empty(&readyQ_FCFS)){
                 current_process = processes[readyQ_FCFS.data[++process_index]-1];
                 current_cpu_burst = current_process.cpu_burst;
-                //printf("Next process changed.\n");
-                //printf("Next process : %d | CPU burst : %d\n", current_process.pid, current_cpu_burst);
             }
             else {
                 end_second = sec_index;
-                //printf("Processing Ended.\n");
                 break;
             }
         }
@@ -177,7 +169,6 @@ SCHEDULED_RESULT FCFS() {
             second[sec_index] = current_process.pid;
             current_cpu_burst--;
             sec_index++;
-            //printf("Processing...%d | current burst : %d | sec = %d\n", current_process.pid, current_cpu_burst, sec_index);
         }
     }
 
@@ -186,15 +177,12 @@ SCHEDULED_RESULT FCFS() {
 }
 
 SCHEDULED_RESULT SJF() {
-    //printf("SJF is started!\n");
-
     //second 배열 선언 
     int *second = (int*)malloc(MAX_SECOND * sizeof(int)); //second 배열의 크기는 전체 프로세스 처리 시간
     int sec_index = 0;
     int end_second;
 
     while(!Is_empty(&readyQ_SJF)) {
-        //printf("[while]\n");
         int shortest_index = -1;
         int shortest_burst = 100; // inf로 초기화하는 것과 같음
 
@@ -205,16 +193,13 @@ SCHEDULED_RESULT SJF() {
                 shortest_index = i;
             }
         }
-        //printf("shortest process = %d, burst = %d\n", readyQ_SJF.data[shortest_index], shortest_burst);
         // 가장 짧은 프로세스 실행
         if (shortest_index != -1) {
             PROCESS shortest_process = processes[readyQ_SJF.data[shortest_index] - 1];
             for (int i = 0; i < shortest_process.cpu_burst; i++) {
                 second[sec_index] = shortest_process.pid;
-                //printf("sec = %d | processing... %d \n", sec_index, shortest_process.pid);
                 sec_index++;
             }
-            //printf("shortest index = %d\n", shortest_index);
             
             // 실행 완료된 프로세스 레디 큐에서 제거
             for (int i = shortest_index; i < readyQ_SJF.size - 1; i++) {
@@ -224,7 +209,6 @@ SCHEDULED_RESULT SJF() {
         }
         else {
             sec_index++;
-            //printf("sec = %d \n", sec_index);
         }
     }
     end_second = sec_index;
@@ -233,15 +217,12 @@ SCHEDULED_RESULT SJF() {
 }
 
 SCHEDULED_RESULT Priority() {
-    //printf("Priority is started!\n");
-
     //second 배열 선언 
     int *second = (int*)malloc(MAX_SECOND * sizeof(int)); //second 배열의 크기는 전체 프로세스 처리 시간
     int sec_index = 0;
     int end_second;
 
     while(!Is_empty(&readyQ_prt)) {
-        //printf("[while]\n");
         int min_priority_index = -1;
         int min_priority = 100; // inf로 초기화하는 것과 같음
 
@@ -252,13 +233,11 @@ SCHEDULED_RESULT Priority() {
                 min_priority_index = i;
             }
         }
-        //printf("min_priority process = %d, priority = %d\n", readyQ_prt.data[min_priority_index], min_priority);
         // 가장 작은 우선순위의 프로세스 실행
         if (min_priority_index != -1) {
             PROCESS min_priority_process = processes[readyQ_prt.data[min_priority_index] - 1];
             for (int i = 0; i < min_priority_process.cpu_burst; i++) {
                 second[sec_index] = min_priority_process.pid;
-                //printf("sec = %d | processing... %d \n", sec_index, min_priority_process.pid);
                 sec_index++;
             }
             
@@ -270,7 +249,6 @@ SCHEDULED_RESULT Priority() {
         }
         else {
             sec_index++;
-            //printf("sec = %d \n", sec_index);
         }
     }
     end_second = sec_index;
@@ -412,7 +390,6 @@ SCHEDULED_RESULT Preemptive_SJF() { // error
             sec_index++;
         }
         printf("sec_index = %d\n", sec_index);
-        //sleep(5);
         
     }
     end_second = sec_index;
@@ -536,7 +513,7 @@ int main() {
     for (int i=0; i<MAX_PROCESS; i++) {
         printf("PID : %d\n", processes[i].pid);
         printf("CPU burst time : %d\n", processes[i].cpu_burst);
-        //printf("I/O burst time : %d\n", processes[i].io_burst);
+        printf("I/O burst time : %d\n", processes[i].io_burst);
         printf("Arrival time : %d\n", processes[i].arrival_time);
         printf("Priority = %d\n\n", processes[i].priority);
     }
